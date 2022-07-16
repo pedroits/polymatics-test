@@ -1,0 +1,24 @@
+version: '3'
+
+services:
+  middleware:
+    container_name: "middleware"
+    build:
+      context: .
+      dockerfile: "Dockerfile.middleware"
+    ports:
+      - "5000:5000"
+    environment:
+      - "DEBUG=True"
+      - "SHOPIFY_NAME="
+      - "SHOPIFY_TOKEN="
+
+  react:
+    container_name: "react"
+    build:
+      context: .
+      dockerfile: "Dockerfile.react"
+    ports:
+      - "3000:3000"
+    environment:
+      - "DEBUG=True"
