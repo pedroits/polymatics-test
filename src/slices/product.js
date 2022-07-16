@@ -3,7 +3,9 @@ import axios from 'axios';
 
 const initialState = {
     productResponse: {},
-    loading: false
+    loading: false,
+    pageInfo: null,
+    productCache: {}
 };
 
 const URL = 'http://localhost:5000';
@@ -13,7 +15,10 @@ export const fetchProducts = createAsyncThunk(
     async (pageInfo) => {
         const url = pageInfo ? `${URL}/?pageInfo=${pageInfo}` : URL;
         const response = await axios.get(url);
-        return response.data;
+        return {
+            pageInfo: pageInfo,
+            ...response.data
+        };
     }
 );
 
@@ -21,8 +26,8 @@ export const productSlice = createSlice({
     name: 'products',
     initialState,
     reducers: {
-        increment: (state) => {
-            state.value += 1;
+        setProductResponse: (state, action) => {
+            state.productResponse = action.payload;
         },
     },
     extraReducers: (builder) => {
@@ -31,8 +36,21 @@ export const productSlice = createSlice({
             .addCase(fetchProducts.fulfilled, (state, action) => {
                 state.loading = false;
                 state.productResponse = action.payload;
+                if(action.payload.pageInfo){
+                    state.productCache[action.payload.pageInfo] = action.payload;
+                }
             });
     },
 });
+
+export const setPageInfo = pageInfo => (dispatch, getState) => {
+    const state = getState().products;
+
+    if(state.productCache[pageInfo]){
+        dispatch(productSlice.actions.setProductResponse(state.productCache[pageInfo]));
+    } else {
+        dispatch(fetchProducts(pageInfo));
+    }
+}
 
 export default productSlice.reducer;

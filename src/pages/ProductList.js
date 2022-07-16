@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 
-import { fetchProducts } from '../slices/product';
+import { fetchProducts, setPageInfo } from '../slices/product';
 
 import styles from './ProductList.module.css';
 
@@ -25,11 +25,11 @@ export function ProductList() {
     return (
         <div>
             <div className={styles.row}>
-                { productResponse?.prevPage && <button className={styles.button} aria-label="Previous Page" onClick={() => dispatch(fetchProducts(productResponse?.prevPage))}>
+                { productResponse?.prevPage && <button className={styles.button} aria-label="Previous Page" onClick={() => dispatch(setPageInfo(productResponse?.prevPage))}>
                     Prev Page
                 </button>}
                 { productResponse?.nextPage &&
-                <button className={styles.button} aria-label="Next Page" onClick={() => dispatch(fetchProducts(productResponse?.nextPage))}>
+                <button className={styles.button} aria-label="Next Page" onClick={() => dispatch(setPageInfo(productResponse?.nextPage))}>
                     Next Page
                 </button>}
             </div>
